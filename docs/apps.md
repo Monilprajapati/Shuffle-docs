@@ -6,7 +6,7 @@ Documentation for apps. If you'd like to make an app [check out this guide](/doc
 * [Core concepts](#core-concepts)
   * [Actions](#actions)
   * [Arguments](#arguments)
-  * [Authentication](#authentication-basics)
+  * [Authentication](#app-authentication)
   * [Environments and versioning](#environments-and-versioning)
 * [App Authentication](#app-authentication)
   * [No Authentication](#no-authentication)
@@ -63,8 +63,8 @@ You can see what parameters and action has by going to /apps, selecting an app a
 
 ![Apps view 3](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-3.png?raw=true)
 
-### Authentication basics
-Authentication defines what credentials an app requires and how they are reused across workflows. Authentication fields become required inputs in the workflow UI and are stored securely as part of the app’s configuration. Choose the method that matches the target API (e.g., API Key, Bearer, Basic, OAuth2) and avoid hardcoding secrets in the app definition. See [App Authentication](#app-authentication) for options and details, and the [Authentication](#authentication) section below for how to configure them in the App Creator.
+### Authentication
+Authentication defines what credentials an app requires and how they are reused across workflows. Authentication fields become required inputs in the workflow UI and are stored securely as part of the app’s configuration. Choose the method that matches the target API (e.g., API Key, Bearer, Basic, OAuth2) and avoid hardcoding secrets in the app definition. See [App Authentication](#app-authentication) for options and details, and the [Authentication](#app-authentication) section below for how to configure them in the App Creator.
 
 ### Environments and versioning
 Apps may be deployed across multiple environments with distinct credentials, and versions are used to prevent breaking changes across updates.
@@ -253,10 +253,6 @@ All apps can be published. Published apps are available to EVERYONE using Shuffl
 
 ## Create custom apps 
 [Learn about app creation](/docs/app_creation)
-
-<!-- Removed duplicate Importing remote apps heading (content exists earlier) -->
-
-<!-- Removed duplicate Delete app heading (content exists earlier) -->
 
 ## App Creation Introduction
 Apps are how work is done in Shuffle. They receive a piece of data, whether JSON or string, performs some action, then returns data back to the user. Apps are mostly community-made, and we aim to support that the best way we can. We allow apps to be made as Swagger/OpenAPI specifications using the app creator OR directly with Python. Each app contains multiple actions, which again can have multiple parameters. More about apps and [how they work here](/docs/apps).

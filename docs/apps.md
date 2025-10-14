@@ -6,7 +6,7 @@ Documentation for apps. If you'd like to make an app [check out this guide](/doc
 * [Core concepts](#core-concepts)
   * [Actions](#actions)
   * [Arguments](#arguments)
-  * [Authentication basics](#authentication-basics)
+  * [Authentication](#authentication-basics)
   * [Environments and versioning](#environments-and-versioning)
 * [App Authentication](#app-authentication)
   * [No Authentication](#no-authentication)
@@ -70,14 +70,97 @@ Authentication defines what credentials an app requires and how they are reused 
 Apps may be deployed across multiple environments with distinct credentials, and versions are used to prevent breaking changes across updates.
 
 ## App Authentication
-Authentication settings determine what required fields users will see when adding an app to a workflow, and how credentials are stored and reused. Use the options below to match your target API, and see details in the [Authentication](#authentication) section of the App Creator.
+Authentication settings determine what required fields users will see when adding an app to a workflow, and how credentials are stored and reused. Choose the method that matches your target API. The sections below explain each option.
 
-- [No Authentication](#no-authentication)
-- [API Key](#api-key)
-- [Bearer Auth](#bearer-auth)
-- [Basic Auth](#basic-auth)
-- [OAuth2](#oauth2)
-- [Extra Authentication](#extra-authentication)
+### No Authentication
+Self-explanatory - no authentication is added, meaning no new required fields. 
+
+### API Key
+API-key allows you to add a Header or a Query (?field=value in URL) to the HTTP request. This will additionally add a URL field to the authentication, so that both the authentication and URL can be encrypted and re-used. 
+
+Normally used for keys like: "X-API-KEY" or "?auth=<apikey>"
+
+Additionally, you can add a Prefix. This is NOT your API key itself. Example:
+- You want to add a Header key that is "apikey=token <apikey>"
+- Fill in the Key to be "apikey", and choose Field Type "Header". 
+- To make this convenient, fill in "token " in the Value Prefix field.
+- The user now only has to fill in the apikey part, as Shuffle will add the prefix automatically
+
+<img width="767" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/ca91b8a4-0953-4a6d-8d22-aea0a614cf91">
+
+
+### Bearer Auth
+Bearer Auth is a special authentication that is very close to API key. It does what the previous authentication does, but in a very specific way. If Bearer Auth is enabled, the Header that is added will ALWAYS look like this:
+
+```
+Authorization=Bearer <apikey>
+```
+
+This is used widely enough that we decided to add it as it's own authentication type.
+
+### Basic Auth
+Basic Auth is like a Login. It uses a Username and Password which has to be filled in. This will then get translated into base64 in the following format: base64(username:password), and further added as a Header to the request in the following format:
+
+```
+Authorization=Basic base64(username:password)
+```
+
+Very widely used in older systems.
+
+### OAuth2
+Oauth2 is a special kind of **multi-step** authentication, meaning Shuffle will run a request to authorize your user's access before the actual HTTP request runs. There are two main forms of it that are widely used by larger companies: Delegated and Application. 
+
+- **Delegated Permissions** are a way for you to give access to something from your (typically) individual account. This can be an account at work, but is still from an individual's account. This will create a popup where you need to accept these permissions. Requires Client ID + Client Secret + Scope + user login
+- **Application Permissions** require a Client ID + Client Secret + Scope, and are the typical way to use Oauth2 for security. It uses permissions from the platform itself, and usually has more permissions than delegated, but doesn't allow you to delve into the personal access of an individual.
+
+PS: As of October 2023, we only support Delegated Permissions in the App Creator (Application is TBA).
+
+As the creator of the app, you will need to fill in three (3) fields to help Shuffle and the user with Authorization: 
+- Authorization URL
+- Token URL (does refresh as well typically)
+- Scopes
+
+All of these should be retrieved from the 3rd party platform itself. The Scopes are options the user can use to Authenticate the app, and we suggest adding as many relevant ones as possible to the list, with the most popular first.
+
+<img width="600" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/c1f67779-ac20-4aea-83bf-bc9a4365b5e0">
+
+For the most well-known apps, Shuffle may have even added a "One-step signin" for an app. If you want this for your app to make it easier for users, [contact us](https://shuffler.io/contact). If this is not in place, the user needs to fill in a Client ID and Client Secret themselves.
+
+<img width="250" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/3227d072-614a-48a2-b6af-efbb7b63afad">
+
+Note on OAuth2 providers: Oauth2 is a special authentication mechanism, most used by major providers like Google and Microsoft, but also others who want good authentication mechanisms. Oauth2 works by primarily defining two URL's (three with refresh token URL) and scopes that can be used. One good example is [microsoft graph](https://shuffler.io/apps/edit/d71641a57deeee8149df99080adebeb7).
+
+As per the provider's documentation, you need to find their authorization url, token URL and Scopes that are matching what you want to do. Here's [what we found from Microsoft](https://docs.microsoft.com/en-us/graph/auth-v2-user). Please keep in mind you do NOT have to add the queries, but just the main URL. For Microsoft the user will have to change the tenant.
+
+![image](https://user-images.githubusercontent.com/5719530/170031712-f1924861-36a1-4180-8f3b-e3e682873443.png)
+
+After filling these in, you can now safely proceed to a Workflow to use the app. When authenticating the app, you will now have to fill in the following as a user:
+```
+- Client ID
+- Client Secret
+- Scopes
+```
+
+![image](https://user-images.githubusercontent.com/5719530/170031817-1e45dd41-a038-4498-9f4e-14a91785a6ef.png)
+
+The former two will have to be found by the USER, as the point of this authentication type is to run as the user itself. This has to be documented well, either in the description of the app itself, or in the [OpenAPI documentation folder on Github]() to make it easily available to users. An example [for Microsoft app registration can be found here](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app), which includes how to get a client ID and secret. 
+
+### Extra Authentication
+Additionally, there is a field called "Extra Authentication". This is meant to add extra REQUIRED 
+
+
+Let's use "GreyNoise" as an example.
+
+GreyNoise uses the URL "https://api.greynoise.io" and authentication type of "API key" with the header "key". 
+![Apps view 8](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-8.png?raw=true)
+
+When authenticating this app in a workflow, we will therefore see two fields - "API key" and "URL". As you can see, the URL is auto-filled, but editable, as some services have configurable URL's.
+- 
+![Apps view 12](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-12.png?raw=true)
+
+If you want extra variables added to the required authentication, you can add them with the "Extra configuration items". The defined header or query will then be added to every request from the user.
+
+![Apps view 14](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-14.png?raw=true)
 
 ## Discover and evaluate apps
 ### Search for apps
@@ -171,29 +254,9 @@ All apps can be published. Published apps are available to EVERYONE using Shuffl
 ## Create custom apps 
 [Learn about app creation](/docs/app_creation)
 
-## Importing remote apps
-**NOT CLOUD**
+<!-- Removed duplicate Importing remote apps heading (content exists earlier) -->
 
-If you have a repository (private or public) of custom apps for Shuffle (or WALKOFF), Shuffle can load all the apps by using the "Download from URL" button in the /apps view.
-
-1. Click the "Download from URL" button
-![Apps view 9](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-9.png?raw=true)
-
-2. Fill in the github/gitlab URL, and if the repo is private, your username & password. These are used for BasicAuth when running git clone. 
-![Apps view 10](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-10.png?raw=true)
-
-3. Hit submit. If it's unsuccessful, it will throw an error, otherwise show a loading icon. This means it's working on getting your apps.
-
-## Delete app 
-**PS: There is nothing stopping you from deleting an app that is used by a workflow. This is a destructive action, and will make some workflows using the app unusable.**
-
-Deleting an app is done by searching for it in /apps. 
-
-Required permissions (either or):
-* Admin
-* App owner / creator
-
-![Apps view 8](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-8.png?raw=true)
+<!-- Removed duplicate Delete app heading (content exists earlier) -->
 
 ## App Creation Introduction
 Apps are how work is done in Shuffle. They receive a piece of data, whether JSON or string, performs some action, then returns data back to the user. Apps are mostly community-made, and we aim to support that the best way we can. We allow apps to be made as Swagger/OpenAPI specifications using the app creator OR directly with Python. Each app contains multiple actions, which again can have multiple parameters. More about apps and [how they work here](/docs/apps).
@@ -262,114 +325,9 @@ Creating or editing an app in Shuffle is made to be as simple and fast as possib
 * Tags: Add 1-5 tags that seem to fit. 
 
 ### Authentication
-There are many ways to authenticate Shuffle apps. The most important thing is to understand how authentication is reflected in a Workflow. Authentication fields become "required" fields, and can be stored in the App Authentication, utilized in a workflow. These are the authentication Options found in the App Creator:
+See [App Authentication](#app-authentication) for all authentication methods, required fields, and configuration details in the App Creator.
 
-- No Authentication
-- API Key
-- Bearer Auth
-- Basic Auth
-- Oauth2
-- JWT
-- Extra Authentication
-
-Below is an explanation for each of these. 
-
-**PS: Do not add your API key(s) to the App itself. This is done during authentication**
-
-### No Authentication
-Self-explanatory - no authentication is added, meaning no new required fields. 
-
-### API Key
-API-key allows you to add a Header or a Query (?field=value in URL) to the HTTP request. This will additionally add a URL field to the authentication, so that both the authentication and URL can be encrypted and re-used. 
-
-Normally used for keys like: "X-API-KEY" or "?auth=<apikey>"
-
-Additionally, you can add a Prefix. This is NOT your API key itself. Example:
-- You want to add a Header key that is "apikey=token <apikey>"
-- Fill in the Key to be "apikey", and choose Field Type "Header". 
-- To make this convenient, fill in "token " in the Value Prefix field.
-- The user now only has to fill in the apikey part, as Shuffle will add the prefix automatically
-
-<img width="767" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/ca91b8a4-0953-4a6d-8d22-aea0a614cf91">
-
-
-### Bearer Auth
-Bearer Auth is a special authentication that is very close to API key. It does what the previous authentication does, but in a very specific way. If Bearer Auth is enabled, the Header that is added will ALWAYS look like this:
-
-```
-Authorization=Bearer <apikey>
-```
-
-This is used widely enough that we decided to add it as it's own authentication type.
-
-### Basic Auth
-Basic Auth is like a Login. It uses a Username and Password which has to be filled in. This will then get translated into base64 in the following format: base64(username:password), and further added as a Header to the request in the following format:
-
-```
-Authorization=Basic base64(username:password)
-```
-
-Very widely used in older systems.
-
-### Oauth2
-Oauth2 is a special kind of **multi-step** authentication, meaning Shuffle will run a request to authorize your user's access before the actual HTTP request runs. There are two main forms of it that are widely used by larger companies: Delegated and Application. 
-
-- **Delegated Permissions** are a way for you to give access to something from your (typically) individual account. This can be an account at work, but is still from an individual's account. This will create a popup where you need to accept these permissions. Requires Client ID + Client Secret + Scope + user login
-- **Application Permissions** require a Client ID + Client Secret + Scope, and are the typical way to use Oauth2 for security. It uses permissions from the platform itself, and usually has more permissions than delegated, but doesn't allow you to delve into the personal access of an individual.
-
-**PS: As of October 2023, we only support Delegated Permissions in the App Creator (Application is TBA).**
-
-As the creator of the app, you will need to fill in three (3) fields to help Shuffle and the user with Authorization: 
-- Authorization URL
-- Token URL (does refresh as well typically)
-- Scopes
-
-All of these should be retrieved from the 3rd party platform itself. The Scopes are options the user can use to Authenticate the app, and we suggest adding as many relevant ones as possible to the list, with the most popular first.
-
-<img width="600" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/c1f67779-ac20-4aea-83bf-bc9a4365b5e0">
-
-For the most well-known apps, Shuffle may have even added a "One-step signin" for an app. If you want this for your app to make it easier for users, [contact us](https://shuffler.io/contact). If this is not in place, the user needs to fill in a Client ID and Client Secret themselves.
-
-<img width="250" alt="image" src="https://github.com/Shuffle/Shuffle-docs/assets/5719530/3227d072-614a-48a2-b6af-efbb7b63afad">
-
-
-
-
-### Extra Authentication
-Additionally, there is a field called "Extra Authentication". This is meant to add extra REQUIRED 
-
-
-
-Let's use "GreyNoise" as an example.
-
-GreyNoise uses the URL "https://api.greynoise.io" and authentication type of "API key" with the header "key". 
-![Apps view 8](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-8.png?raw=true)
-
-When authenticating this app in a workflow, we will therefore see two fields - "API key" and "URL". As you can see, the URL is auto-filled, but editable, as some services have configurable URL's.
-- 
-![Apps view 12](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-12.png?raw=true)
-
-If you want extra variables added to the required authentication, you can add them with the "Extra configuration items". The defined header or query will then be added to every request from the user.
-
-![Apps view 14](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-14.png?raw=true)
-
-### Oauth2
-Oauth2 is a special authentication mechanism, most used by major providers like Google and Microsoft, but also others who want good authentication mechanisms. Oauth2 works by primarily defining two URL's (three with refresh token URL) and scopes that can be used. One good example is [microsoft graph](https://shuffler.io/apps/edit/d71641a57deeee8149df99080adebeb7).
-
-As per the provider's documentation, you need to find their authorization url, token URL and Scopes that are matching what you want to do. Here's [what we found from Microsoft](https://docs.microsoft.com/en-us/graph/auth-v2-user). Please keep in mind you do NOT have to add the queries, but just the main URL. For Microsoft the user will have to change the tenant.
-
-![image](https://user-images.githubusercontent.com/5719530/170031712-f1924861-36a1-4180-8f3b-e3e682873443.png)
-
-After filling these in, you can now safely proceed to a Workflow to use the app. When authenticating the app, you will now have to fill in the following as a user:
-```
-- Client ID
-- Client Secret
-- Scopes
-```
-
-![image](https://user-images.githubusercontent.com/5719530/170031817-1e45dd41-a038-4498-9f4e-14a91785a6ef.png)
-
-The former two will have to be found by the USER, as the point of this authentication type is to run as the user itself. This has to be documented well, either in the description of the app itself, or in the [OpenAPI documentation folder on Github]() to make it easily available to users. An example [for Microsoft app registration can be found here](https://docs.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app), which includes how to get a client ID and secret. 
+PS: Do not add your API key(s) to the App itself. Provide credentials during authentication.
 
 
 ### Actions

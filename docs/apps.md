@@ -2,32 +2,45 @@
 Documentation for apps. If you'd like to make an app [check out this guide](/docs/app_creation)
 
 ## Table of contents
-* [Introduction](#introduction)
-* [How they work](#how-they-work)
+* [Overview](#overview)
+* [Core concepts](#core-concepts)
   * [Actions](#actions)
   * [Arguments](#arguments)
-  * [Searching for apps](#searching-for-apps)
-  * [Debugging apps](#debugging-apps)
-* [Creating apps](#create-custom-apps)
-  * [Updating apps remotely](#updating-apps-remotely)
-  * [Delete app](#delete-app)
-* [Finding more apps](#finding-apps)
-  * [Testing apps](#testing-apps)
-  * [Downloading apps](#downloading-apps)
-  * [Importing apps](#importing-apps)
-  * [Publishing apps](#publishing-apps)
-  * [Activating apps](#activating-apps)
-  * [Importing remote apps](#importing-remote-apps)
+  * [Authentication basics](#authentication-basics)
+  * [Environments and versioning](#environments-and-versioning)
+* [App Authentication](#app-authentication)
+  * [No Authentication](#no-authentication)
+  * [API Key](#api-key)
+  * [Bearer Auth](#bearer-auth)
+  * [Basic Auth](#basic-auth)
+  * [OAuth2](#oauth2)
+  * [Extra Authentication](#extra-authentication)
+* [Discover and evaluate apps](#discover-and-evaluate-apps)
+  * [Search for apps](#search-for-apps)
+  * [Find apps](#find-apps)
+  * [Test apps](#test-apps)
+* [Use apps in your org](#use-apps-in-your-org)
+  * [Activate apps](#activate-apps)
+  * [Download apps](#download-apps)
+  * [Import apps](#import-apps)
+  * [Import remote apps (on-prem)](#import-remote-apps-on-prem)
+  * [Update apps remotely (on-prem)](#update-apps-remotely-on-prem)
+  * [Delete an app](#delete-an-app)
+* [Create custom apps](#create-custom-apps)
+  * [App Creator in the UI](#app-creator-in-the-ui)
+  * [Python apps (manual)](#python-apps-manual)
+* [Debugging](#debugging-apps)
+* [FAQ](#faq)
 * [API](#api)
 
-## Introduction
+## Overview
 Apps are the heavy lifters of [workflows](/docs/workflows) within Shuffle. They give access to a library of functions, and are created using OpenAPI or pure Python. Shuffle gives you access to pre-defined integrations located [here](https://github.com/frikky/shuffle-apps). 
 
 A subset of available apps can be found at [https://shuffler.io/apps](https://shuffler.io/apps). 
 
 ![Apps view 1](https://github.com/user-attachments/assets/71b1fc24-a49b-46e3-bdc2-a4286c94498e?raw=true)
 
-## How they work
+## Core concepts
 Apps are the primary building blocks in workflows. Apps can be auto-generated from [OpenAPI](https://swagger.io/specification/) specifications or using Shuffle's app sdk. To enforce stability and usability, we use a versioning system to prevent sudden updates to apps.
 
 Apps can contain multiple actions, which can take multiple variables. They are made to be able to interact with each other by using each-others' data. Apps have the ability to be in multiple [environment](/docs/organizations#environments) with different data (e.g. different credentials), before passing them on.
@@ -50,18 +63,24 @@ You can see what parameters and action has by going to /apps, selecting an app a
 
 ![Apps view 3](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-3.png?raw=true)
 
-## Updating apps remotely
-**PS: This only applies to onprem**
-Going to /apps, there exists a button called "Download from Github" which by default will download apps from the directory https://github.com/frikky/shuffle-apps. You can type in your own repository along with authentication options if applicable.
+### Authentication basics
+Authentication defines what credentials an app requires and how they are reused across workflows. Authentication fields become required inputs in the workflow UI and are stored securely as part of the app’s configuration. Choose the method that matches the target API (e.g., API Key, Bearer, Basic, OAuth2) and avoid hardcoding secrets in the app definition. See [App Authentication](#app-authentication) for options and details, and the [Authentication](#authentication) section below for how to configure them in the App Creator.
 
-![Apps view 11](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-11.png?raw=true)
+### Environments and versioning
+Apps may be deployed across multiple environments with distinct credentials, and versions are used to prevent breaking changes across updates.
 
-When the modal opens, there are two buttons:
-* Submit - Downloads and builds NEW apps
-* Force update - Downloads and builds ALL apps
-* Cancel - Closes the modal with no action
+## App Authentication
+Authentication settings determine what required fields users will see when adding an app to a workflow, and how credentials are stored and reused. Use the options below to match your target API, and see details in the [Authentication](#authentication) section of the App Creator.
 
-## Searching for apps
+- [No Authentication](#no-authentication)
+- [API Key](#api-key)
+- [Bearer Auth](#bearer-auth)
+- [Basic Auth](#basic-auth)
+- [OAuth2](#oauth2)
+- [Extra Authentication](#extra-authentication)
+
+## Discover and evaluate apps
+### Search for apps
 When you set up Shuffle for the first time, it should provide you with >100 existing Apps. These are gathered from [shuffle-apps](https://github.com/frikky/shuffle-apps), and will grow over time. Searching for apps is done by going to /apps and writing your search term. In the example below, we searched for "TheHive", which ends in TheHive being shown. 
 
 ![Apps view 4](https://github.com/Shuffle/shuffle-docs/blob/master/assets/search_by_appname.png?raw=true)
@@ -70,17 +89,12 @@ A goal for Shuffle is to make it possible to search outside the apps you current
 
 **PS: Extended search can be done using the [shuffler search-engine](https://shuffler.io/search)**
 
-## Debugging apps
-Apps may fail at times, usually due to bad coding on the creators' side. This means that to get more information, you may be required to troubleshoot and debug to get the logs. 
-
-More about this in the [app creation](/docs/app_creation#debugging) debugging section
-
-## Finding apps 
+### Find apps 
 If the app you're looking for exists, it will be available on [https://shuffler.io](https://shuffler.io) or [Github](https://github.com/frikky/shuffle-apps). Apps available on the Shuffle website, can further be clicked then exported or tested directly.
 
 ![Apps view search 16](https://github.com/Shuffle/shuffle-docs/blob/master/assets/searchengine_app.png?raw=true)
 
-## Testing apps 
+### Test apps 
 After you've found a public or private app on [https://shuffler.io](https://shuffler.io/apps/c051cc46559dd040d963e0cdf19b7d9b), it's possible to test it directly. The view you get access to has the fully featured app included, meaning you won't need to build a workflow to test it.
 
 **Options:**
@@ -91,12 +105,22 @@ After you've found a public or private app on [https://shuffler.io](https://shuf
 
 ![Apps view search 16](https://github.com/Shuffle/shuffle-docs/blob/master/assets/searchengine_app.png?raw=true)
 
-## Downloading apps 
+## Use apps in your org
+### Activate apps 
+Any public app can be activated, giving you access to a copy of the original app. This app is editable, meaning you can change the configuration of the app in it's entirety in your own Organization. Activation can be done by first [Find apps](#find-apps), then clicking the "Activate App" in the top right corner. If successful, you should see a notification that it's been activated.
+
+Once an app is activated, you can use it within any Workflow, and find it under /apps. If you can already see the app under the /apps view, it means the app is already enabled. You need to be logged in. 
+
+If you want an app activated in your LOCAL environment, see [Import apps](#import-apps)
+
+![Apps view activation 19](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-19.png?raw=true)
+
+### Download apps 
 Apps can be downloaded or exported from your local instance or [https://shuffler.io](https://shuffler.io) as long as it's either your private app, or a public one AND is OpenAPI. If you find the "download" icon in any part of Shuffle, that means the item is exportable.
 
 ![Apps view activation 18](https://github.com/Shuffle/shuffle-docs/blob/master/assets/download_app.png?raw=true)
 
-## Importing apps
+### Import apps
 If you have an OpenAPI specification, either exported from Shuffle or otherwise, it can be imported in the [/apps](https://shuffler.io/apps) view. You need to be logged in.
 
 Supported filetypes:
@@ -110,17 +134,28 @@ The options for importing are:
 
 ![Apps view activation 17](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-17.png?raw=true)
 
-## Activating apps 
-Any public app can be activated, giving you access to a copy of the original app. This app is editable, meaning you can change the configuration of the app in it's entirety in your own Organization. Activation can be done by first [Finding the app](#finding_apps), then clicking the "Activate App" in the top right corner. If successful, you should se a notification that it's been activated.
+### Import remote apps (on-prem)
+If you have a repository (private or public) of custom apps for Shuffle (or WALKOFF), Shuffle can load all the apps by using the "Download from URL" button in the /apps view.
 
-Once an app is activated, you can use it within any Workflow, and find it under /apps. If you can already see the app under the /apps view, it means the app is already enabled. You need to be logged in. 
+1. Click the "Download from URL" button
+![Apps view 9](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-9.png?raw=true)
 
-If you want an app activated in your LOCAL environment, see [importing apps](#importing_apps)
+2. Fill in the github/gitlab URL, and if the repo is private, your username & password. These are used for BasicAuth when running git clone. 
+![Apps view 10](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-10.png?raw=true)
 
-![Apps view activation 19](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-19.png?raw=true)
+3. Hit submit. If it's unsuccessful, it will throw an error, otherwise show a loading icon. This means it's working on getting your apps.
 
+### Update apps remotely (on-prem)
+Going to /apps, there exists a button called "Download from Github" which by default will download apps from the directory https://github.com/frikky/shuffle-apps. You can type in your own repository along with authentication options if applicable.
 
-## Publishing apps 
+![Apps view 11](https://github.com/frikky/shuffle-docs/blob/master/assets/apps-view-11.png?raw=true)
+
+When the modal opens, there are two buttons:
+* Submit - Downloads and builds NEW apps
+* Force update - Downloads and builds ALL apps
+* Cancel - Closes the modal with no action
+
+### Publishing apps 
 All apps can be published. Published apps are available to EVERYONE using Shuffle, as long as they activate it. This means if you publish an app, it is searchable AND shareable with others. The process for Python and the App Creator are different, as can be seen below. 
 
 **Python**:
@@ -191,7 +226,7 @@ A normal question we get asked all the time - should I use the app creator or Py
 ### How apps are built
 When you build an app in Shuffle, it goes through a validation process before building the app. This process ends in a fully working Docker Image containing your apps, pointing to the original app specification to ensure users can use it in the front-end as well.
 
-## App Creator in the Shuffle UI
+## App Creator in the UI
 The app creator in Shuffle is built to handle any integration for HTTP apps you may think of. It's based on OpenAPI, and will generate the app using the Python SDK in the background. 
 
 [Here's an example from a workshop](https://youtu.be/PNuXCixYwDc?t=7822)

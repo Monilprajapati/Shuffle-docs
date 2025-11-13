@@ -1,4 +1,4 @@
-# Open Source vs Enterprise
+# Open Source vs Enterprise Testing
 
 ## Shuffle 🧡 Open Source
 

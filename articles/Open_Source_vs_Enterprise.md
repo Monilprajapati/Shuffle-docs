@@ -1,5 +1,4 @@
-# Open Source vs Enterprise
-mnjojnljkm 
+# Open Source vs Enterprise ok
 ## Shuffle 🧡 Open Source
 
 Shuffle has been open source from its inception, and we have no plans to change that. All of Shuffle's code is public, and this is so anyone can use Shuffle.

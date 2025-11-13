@@ -1,4 +1,4 @@
-# Compliance fineeeee
+# Compliance !!!
 
 On top of Shuffle's commitment to securing how we use and protect your personal data (see points below, which can also be found [here](https://shuffler.io/docs/privacy_policy)), Shuffle is **[SOC2](https://trust.shuffler.io/#/compliance/SOC%202)**, **[ISO 27001](https://trust.shuffler.io/#/compliance/ISO%2027001%3A2022)** and **[GDPR](https://trust.shuffler.io/#/compliance/GDPR)** compliant.
 

@@ -1,4 +1,4 @@
-# Open Source vs Enterprise ok asjanfadjlnf
+# Open Source vs Enterprise
 ## Shuffle 🧡 Open Source
 
 tsnandafa

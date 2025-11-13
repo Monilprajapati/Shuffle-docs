@@ -1,4 +1,4 @@
-# Shuffle Apps
+# Shuffle Appsssssssssuuu
 Documentation for apps. If you'd like to make an app [check out this guide](/docs/app_creation)
 
 ## Table of contents

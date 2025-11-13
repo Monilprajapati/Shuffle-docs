@@ -1,4 +1,4 @@
-# Open Source vs Enterprise Testing the reset of existing one
+# Open Source vs Enterprise How is it happened at once
 ## Shuffle 🧡 Open Source
 
 Shuffle has been open source from its inception, and we have no plans to change that. All of Shuffle's code is public, and this is so anyone can use Shuffle.

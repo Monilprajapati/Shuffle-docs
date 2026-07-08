@@ -33,6 +33,7 @@ Check your current location on the [/admin page](https://shuffler.io). Use the d
 
 
 
+[loom](https://www.loom.com/share/d3db1c03d3134eb693c6407b5abb1ac7)
 ## Introduction
 Shuffle is a platform to build and execute automation [workflows](/docs/workflows). It's built API-first, and everything available on the frontend has an API endpoint. The listed API's are built and generated with our own [OpenAPI creator](/docs/apps#create_openapi_app). All API's listed are for both versions of Shuffle (cloud/onprem), unless otherwise specified. Our OpenAPI specification can be [downloaded here](https://shuffler.io/apps/edaa73d40238ee60874a853dc3ccaa6f). Below are the base URL's for the API.
 

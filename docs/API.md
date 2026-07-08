@@ -43,6 +43,9 @@ Shuffle is a platform to build and execute automation [workflows](/docs/workflow
 
 [loom](https://www.loom.com/share/d3db1c03d3134eb693c6407b5abb1ac7)
 
+[youtube]("https://www.youtube.com/embed/Nb9_ahZMC5U?si=cBqE-OrB8Cva6wB-")
+[youtube2]("https://youtu.be/Nb9_ahZMC5U?si=7ytc0yL8ReFqWMo_")
+
 ## Authentication
 Shuffle uses [Bearer auth](https://swagger.io/docs/specification/authentication/bearer-authentication/) for authentication. This means that every request you send to the API, you need to send it with the header "Authorization: Bearer <APIKEY>". If Shuffle is multi-tenancy configured, you may have multiple organizations. If you want to specify the organization to use, you may add the header "Org-Id: <ORGID>". It will otherwise use the current active organization.
 
